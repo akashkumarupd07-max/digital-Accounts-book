@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ customer.name }} History</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body class="bg-light">
+    <div class="container-fluid py-3">
+        <a href="/" class="btn btn-sm btn-secondary mb-3"> ⬅ Back</a>
+        <h4>{{ customer.name }}'s Record</h4>
+        <p class="text-muted">{{ customer.phone }} | Total Due: ₹{{ customer.balance }}</p>
+
+        <div class="list-group">
+            {% for t in history %}
+            <div class="list-group-item d-flex justify-content-between align-items-center">
+                <div>
+                    <h6 class="mb-0">{{ t.note if t.note else "No details" }}</h6>
+                    <small class="text-muted">{{ t.date.strftime('%d %b, %I:%M %p') }}</small>
+                </div>
+                <div class="text-end">
+                    <span class="fw-bold {% if t.t_type == 'DEBIT' %}text-danger{% else %}text-success{% endif %}">
+                        {{ "-" if t.t_type == 'DEBIT' else "+" }} ₹{{ t.amount }}
+                    </span><br>
+                    <small class="badge {% if t.t_type == 'DEBIT' %}bg-danger{% else %}bg-success{% endif %}">{{ t.t_type }}</small>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</body>
+</html>
