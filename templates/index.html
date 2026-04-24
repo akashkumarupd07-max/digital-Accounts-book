@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Digital Khata</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body { background-color: #f0f2f5; font-family: sans-serif; }
+        .customer-card { background: white; border-radius: 12px; margin-bottom: 12px; padding: 15px; box-shadow: 0 2px 8px rgba(0,0,0,0.08); position: relative; }
+        .balance-red { color: #d9534f; font-weight: bold; }
+        .balance-green { color: #28a745; font-weight: bold; }
+        .delete-btn { position: absolute; top: 10px; right: 12px; color: #ddd; text-decoration: none; font-size: 1.4rem; }
+        .delete-btn:hover { color: #d9534f; }
+    </style>
+</head>
+<body>
+    <div class="container-fluid py-3">
+        <h4 class="text-center mb-3">📘 Digital Khata Book</h4>
+        
+        <div class="row g-2 mb-3 text-center">
+            <div class="col-6">
+                <div class="card bg-primary text-white p-2 shadow-sm border-0">
+                    <small>Market Due</small>
+                    <h5>₹{{ total_due }}</h5>
+                </div>
+            </div>
+            <div class="col-6">
+                <a href="/reports" class="text-decoration-none">
+                    <div class="card bg-dark text-white p-2 shadow-sm border-0">
+                        <small>{{ current_month }} Sales ➔</small>
+                        <h5>₹{{ m_debit }}</h5>
+                    </div>
+                </a>
+            </div>
+        </div>
+
+        <div class="card p-3 mb-4 border-0 shadow-sm" style="border-radius: 12px;">
+            <h6>New Customer</h6>
+            <form action="/add_customer" method="POST" class="d-flex gap-2">
+                <input type="text" name="name" class="form-control" placeholder="Name" required>
+                <input type="text" name="phone" class="form-control" placeholder="Phone" required>
+                <button type="submit" class="btn btn-success px-4">+</button>
+            </form>
+        </div>
+
+        {% for c in customers %}
+        <div class="customer-card border-0">
+            <a href="/delete_customer/{{ c.id }}" class="delete-btn" onclick="return confirm('Delete this customer?')">×</a>
+            <div class="d-flex justify-content-between align-items-start mb-2">
+                <div>
+                    <h6 class="mb-0 fw-bold">{{ c.name }}</h6>
+                    <small class="text-muted">{{ c.phone }}</small><br>
+                    <a href="/customer/{{ c.id }}" class="btn btn-link p-0 text-decoration-none" style="font-size: 0.85rem;">History ➔</a>
+                </div>
+                <div class="text-end pe-3">
+                    <small class="text-muted">Balance</small>
+                    <div class="{% if c.balance > 0 %}balance-red{% else %}balance-green{% endif %}" style="font-size: 1.1rem;">₹{{ c.balance }}</div>
+                </div>
+            </div>
+            <hr class="my-2">
+            <form action="/transaction/{{ c.id }}" method="POST">
+                <div class="row g-1">
+                    <div class="col-4"><input type="number" name="amount" class="form-control form-control-sm" placeholder="₹" required></div>
+                    <div class="col-8"><input type="text" name="note" class="form-control form-control-sm" placeholder="Details"></div>
+                    <div class="col-7 mt-1">
+                        <select name="t_type" class="form-select form-select-sm bg-light">
+                            <option value="DEBIT">DEBIT (-)</option>
+                            <option value="CREDIT">CREDIT (+)</option>
+                        </select>
+                    </div>
+                    <div class="col-5 mt-1"><button type="submit" class="btn btn-sm btn-primary w-100">Save</button></div>
+                </div>
+            </form>
+        </div>
+        {% endfor %}
+    </div>
+</body>
+  </html>
+  
